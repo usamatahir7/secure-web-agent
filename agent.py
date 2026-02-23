@@ -119,5 +119,5 @@ def run_research_agent(user_query: str, max_steps: int = 7):
         step += 1
 
 if __name__ == "__main__":
-    test_query = "How to tie shoe laces?"
+    test_query = "How is the weather in Tokyo?"
     run_research_agent(test_query)
