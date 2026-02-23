@@ -39,7 +39,7 @@ pip install -r requirements.txt
 ```
 
 **4. Set your OpenAI API Key:**
-This project requires an OpenAI API key to run the `gpt-4o-mini` model. **Do not hardcode your key into the files.** Instead, set it as an environment variable in your terminal:
+This project requires an OpenAI API key to run the `gpt-4o-mini` model. Please set it as an environment variable in your terminal as follows:
 
 * **Mac/Linux:**
 ```bash
@@ -99,7 +99,9 @@ python tests.py
 
 Given the 4–6 hour time budget, the following engineering trade-offs and assumptions were made:
 
-* **Search Provider (DuckDuckGo):** I utilized the unofficial `duckduckgo-search` library instead of a robust enterprise API (like Tavily or Google Programmable Search). This was chosen to remove the friction of requiring reviewers to generate third-party search API keys, acknowledging that DDGS is prone to rate-limiting and poorer snippet quality in a true production environment.
-* **DOM Sanitization vs. Headless Browser:** I used `BeautifulSoup` and `requests` for fast, lightweight DOM sanitization. Because `requests` cannot execute JavaScript, this harness will fail to read Single Page Applications (SPAs) like React sites. With more time, I would upgrade to an isolated, sandboxed Playwright/Puppeteer environment to safely render modern web pages.
-* **Blunt Iframe Stripping:** The agent unconditionally destroys all `<iframe>` tags. While this protects against payload injection, it sacrifices usability by blinding the agent to legitimate embedded content (e.g., YouTube videos, Twitter embeds).
-* **CoT Exposure Risk:** To ensure the smaller `gpt-4o-mini` model reliably generated accurate search queries and selected credible URLs, I forced it to output its reasoning via a `thought_process` parameter in the tool schema. I am assuming the risk of "Chain of Thought Poisoning" (where an attacker embeds fake thoughts into the HTML to confuse the model) is acceptable for this prototype, though Context Scrubbing or utilizing a model with native hidden reasoning (like `o1`) would be required for a public release.
+* **Search Provider & Routing:** I utilized the unofficial `duckduckgo-search` library to remove the friction of requiring reviewers to use third-party API keys. In production, I would replace this with an enterprise API (like Tavily) and implement a **Semantic Router** to forcefully trigger the search loop for factual queries rather than relying solely on the LLM's judgment.
+* **Pre-Fetch vs. Post-Fetch Sanitization:** The agent currently relies entirely on post-fetch DOM sanitization. With more time, I would integrate a Threat Intelligence API (like VirusTotal) at the orchestration layer to block malicious URLs *before* the agent ever visits them.
+* **Semantic Prompt Injections:** My guardrails physically strip executable code and hidden CSS, but an attacker could still write plain-text jailbreaks disguised as normal paragraphs. A production system would utilize a secondary, highly restricted **Evaluator LLM** to scan scraped text for manipulative intent before passing it to the main agent.
+* **DOM Sanitization vs. Headless Browser:** I used `BeautifulSoup` and `requests` for fast, lightweight scraping. Because `requests` cannot execute JavaScript, this harness will fail to read Single Page Applications (SPAs). Ideally, I would upgrade to an isolated Playwright/Puppeteer Docker container with strict network egress policies.
+* **Context Memory Compression:** The loop currently appends up to 5,000 characters of raw scraped text directly to the message history. To prevent blowing out the LLM's token limit and inflating API costs on longer tasks, I would add an intermediate summarization tool to compress the facts before the next loop iteration.
+* **CoT Exposure Risk:** To ensure `gpt-4o-mini` reliably generated accurate search queries, I forced it to output its reasoning via a `thought_process` parameter in the tool schema. I accepted the theoretical risk of "Chain of Thought Forgery," though a public release would require **Context Scrubbing** (deleting the reasoning tokens from the permanent memory array) or upgrading to a model with native hidden reasoning (like `o1`).
