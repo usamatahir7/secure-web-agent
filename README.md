@@ -11,7 +11,7 @@ A secure execution harness for an autonomous ReAct agent. This project equips an
 
 ```bash
 git clone https://github.com/usamatahir7/secure-web-agent.git
-cd YOUR_REPO_NAME
+cd secure-web-agent
 
 ```
 
