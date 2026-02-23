@@ -2,6 +2,7 @@
 📖 **[Read the Design Document](https://docs.google.com/document/d/1w9jmXLV9FDeDPTZtfgphw2TdniKnSVphELg0Imr20XY)**
 
 A secure execution harness for an autonomous ReAct agent. This project equips an LLM with the ability to dynamically search the web and fetch webpage content, while heavily sanitizing the untrusted HTML payload to defend against indirect prompt injections, DoS attacks, and data exfiltration.
+
 ![Agent Architecture Diagram](assets/architecture.png)
 
 ## ⚙️ Setup & Installation
