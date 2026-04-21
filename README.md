@@ -98,7 +98,7 @@ python tests.py
 
 ## ⏱️ Assumptions & Shortcuts (Time Constraints)
 
-Given the 4–6 hour time budget, the following engineering trade-offs and assumptions were made:
+The following engineering trade-offs and assumptions were made:
 
 * **Search Provider & Routing:** I utilized the unofficial `duckduckgo-search` library to remove the friction of requiring reviewers to use third-party API keys. In production, I would replace this with an enterprise API (like Tavily) and implement a **Semantic Router** to forcefully trigger the search loop for factual queries rather than relying solely on the LLM's judgment.
 * **Pre-Fetch vs. Post-Fetch Sanitization:** The agent currently relies entirely on post-fetch DOM sanitization. With more time, I would integrate a Threat Intelligence API (like VirusTotal) at the orchestration layer to block malicious URLs *before* the agent ever visits them.
